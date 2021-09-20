@@ -1,12 +1,10 @@
 # Grandma-s-Portfolio
 
-##
-
 library (quantmod) 
 library(PerformanceAnalytics)
 
-tickers <- c("HASI", "STAG", "GTY", "SLG", "IIPR", "MO", "DLR", "SJM")
-weights <- c(.10, .15, .20, .10, .10, .10, .15 )
+tickers <- c("GTY", "IIPR", "MO", "DLR", "SJM")
+weights <- c(.20, .20, .15, .20, .25)
 
 ## - auto.assign = FALSE - allow you to put downloaded data in Global Environment, pertains to your environment
 
@@ -26,6 +24,8 @@ for(ticker in tickers){
 
 portfolioReturns <- na.omit(ROC(portfolioPrices))
 
+portfolioReturnsInDollar <-Return.portfolio(portfolioReturns,wealth.index = TRUE )
+
                            
 ## To check if you have any missing Data: if = 0, then you dont
 
@@ -38,15 +38,17 @@ colSums(is.na(benchmarkPrices))
 
 benchmarkReturns <- na.omit(ROC(benchmarkPrices))
 
+benchmarkReturn <-Return.portfolio(benchmarkReturns,wealth.index = TRUE )
+
 ## Metrics: BETA, ALPHA, SHARPE Ratio
 
-portfolioReturn <- Return.portfolio(portfolioReturns)
+portfolioReturn <- Return.portfolio(portfolioReturns, wealth.index = TRUE)
 
 ## for daily, you divide by 252 (number of trading days in the year)
 
-BETA <- CAPM.beta(portfolioReturn, benchmarkReturns, .02/12)
+BETA <- CAPM.beta(portfolioReturn, benchmarkReturns, .035/12)
 
-ALPHA <- CAPM.jensenAlpha(portfolioReturn, benchmarkReturns, .02/12)
+ALPHA <- CAPM.jensenAlpha(portfolioReturn, benchmarkReturns, .035/12)
 
 
 
@@ -58,3 +60,32 @@ table.CalendarReturns(portfolioReturn)
 
 chart_Series(portfolioReturn)
 chart_Series(benchmarkReturns)
+
+plot(portfolioPrices)
+plot(portfolioReturn)
+
+## Portfolio Performance versus Benchmark
+
+comp <- merge.xts(portfolioReturn, benchmarkReturn)
+colnames(comp) <- c("Portfolio", "Benchmark")
+
+dygraph(comp, main = "Portfolio Performance vs. Benchmark") %>% dyAxis("y", label = "Amount ($)")
+
+
+
+## Equity Prices vs SDY
+
+comp3 <- merge.xts(portfolioPrices, benchmarkPrices)
+
+colnames(comp) <- c("Portfolio", "Benchmark")
+
+dygraph(comp3, main = "Portfolio Performance vs. Benchmark")%>%
+ dyAxis("y", label = "Amount ($)")
+
+## Corrplot
+
+library(corrplot)
+
+allReturns <- na.omit(merge.xts(portfolioReturns, benchmarkReturns))
+
+corrplot(cor(allReturns), method = 'number')
