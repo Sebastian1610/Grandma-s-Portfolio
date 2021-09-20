@@ -64,28 +64,6 @@ chart_Series(benchmarkReturns)
 plot(portfolioPrices)
 plot(portfolioReturn)
 
-## Portfolio Performance versus Benchmark
-
-comp <- merge.xts(portfolioReturn, benchmarkReturn)
-colnames(comp) <- c("Portfolio", "Benchmark")
-
-dygraph(comp, main = "Portfolio Performance vs. Benchmark") %>% dyAxis("y", label = "Amount ($)")
 
 
 
-## Equity Prices vs SDY
-
-comp3 <- merge.xts(portfolioPrices, benchmarkPrices)
-
-colnames(comp) <- c("Portfolio", "Benchmark")
-
-dygraph(comp3, main = "Portfolio Performance vs. Benchmark")%>%
- dyAxis("y", label = "Amount ($)")
-
-## Corrplot
-
-library(corrplot)
-
-allReturns <- na.omit(merge.xts(portfolioReturns, benchmarkReturns))
-
-corrplot(cor(allReturns), method = 'number')
