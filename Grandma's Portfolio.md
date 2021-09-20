@@ -5,8 +5,8 @@
 library (quantmod) 
 library(PerformanceAnalytics)
 
-tickers <- c("MO", "STAG", "GTY", "SLG")
-weights <- c(.25, .25, .25, .25)
+tickers <- c("HASI", "STAG", "GTY", "SLG", "IIPR", "MO", "DLR", "SJM")
+weights <- c(.10, .15, .20, .10, .10, .10, .15 )
 
 ## - auto.assign = FALSE - allow you to put downloaded data in Global Environment, pertains to your environment
 
@@ -33,7 +33,7 @@ colSums(is.na(portfolioPrices))
 
 ## Benchmark
 
-benchmarkPrices <- getSymbols.yahoo("^GSPC", from = "2016-1-1", periodicity = "monthly", auto.assign = FALSE) [,4]
+benchmarkPrices <- getSymbols.yahoo("SDY", from = "2016-1-1", periodicity = "monthly", auto.assign = FALSE) [,4]
 colSums(is.na(benchmarkPrices))
 
 benchmarkReturns <- na.omit(ROC(benchmarkPrices))
@@ -44,6 +44,17 @@ portfolioReturn <- Return.portfolio(portfolioReturns)
 
 ## for daily, you divide by 252 (number of trading days in the year)
 
-BETA <- CAPM.beta(portfolioReturn, benchmarkReturns, .035/12)
+BETA <- CAPM.beta(portfolioReturn, benchmarkReturns, .02/12)
 
-ALPHA <- CAPM.jensenAlpha(portfolioReturn, benchmarkReturns, .035/12)
+ALPHA <- CAPM.jensenAlpha(portfolioReturn, benchmarkReturns, .02/12)
+
+
+
+## Annual Returns
+
+table.AnnualizedReturns(portfolioReturn)
+
+table.CalendarReturns(portfolioReturn)
+
+chart_Series(portfolioReturn)
+chart_Series(benchmarkReturns)
