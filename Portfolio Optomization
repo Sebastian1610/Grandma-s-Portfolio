@@ -1,0 +1,67 @@
+
+## Portfolio Optimization 
+
+library(quantmod) 
+library(PerformanceAnalytics)
+library(dygraphs)
+library(PortfolioAnalytics)
+library(dplyr)
+library(ROI.plugin.quadprog)
+library(ROI.plugin.glpk)
+
+tickers <- c("GTY", "IIPR", "MO", "DLR", "SJM")
+
+## - auto.assign = FALSE - allow you to put downloaded data in Global Environment, pertains to your environment
+
+## - you are taking the 4th column in the data, and your combining it into your portfolioPrices object
+
+portfolioPrices <- NULL
+for(ticker in tickers){
+  portfolioPrices <- cbind(portfolioPrices, 
+                           getSymbols.yahoo(ticker, from = "2016-1-1", periodicity = "monthly", auto.assign = FALSE) [,4])
+}
+
+## na.omit to remove non-avaiable Values. IIPR price data does not go back 5 years, as company was still private. 
+
+portPrice<- na.omit(ROC(portfolioPrices))
+
+## The portfolio object is created with portfolio.spec. 
+The portfolio object is an S3 object of class 'portfolio' used to hold the initial asset weights, constraints, objectives, 
+and other information about the portfolio. The only required argument to portfolio.spec is assets.
+
+
+portF <- portfolio.spec(colnames(portPrice))
+
+## Add Constraints
+
+portF <- add.constraint(portF, type = "full_investment")
+
+portF <- add.constraint(portF, type = "box",  min = .10, max = .40)
+
+## Add Objectives
+
+portF <- add.objective(portF, type="risk", name="StdDev")
+
+portF <- add.objective(portfolio = portF, type = "return", name = "mean")
+
+## Optimize
+
+optimizedPortfolio <- optimize.portfolio(R = portPrice, portfolio = portF, optimize_method = "ROI", trace = TRUE)
+
+
+## Chart Portfolio Weights
+
+chart.Weights(optimizedPortfolio)
+
+## Efficient Frontier - is the set of optimal portfolios that offer the highest expected return for a defined level of risk or the lowest risk for a given level of expected return. 
+Portfolios that lie below the efficient frontier are sub-optimal because they do not provide enough return for the level of risk.
+
+EF <- extractEfficientFrontier(optimizedPortfolio, match.col = "StdDev", n.portfolios = 25, risk_aversion = NULL)
+
+chart.EfficientFrontier(EF,
+                        match.col = "StdDev", n.portfolios = 25, xlim = NULL, ylim = NULL,
+                        cex.axis = 0.8, element.color = "darkgray", main = "Efficient Frontier",
+                        RAR.text = "SR", rf = 0, tangent.line = TRUE, cex.legend = 0.8,
+                        chart.assets = TRUE, labels.assets = TRUE, pch.assets = 21,
+                        cex.assets = 0.8)
+
