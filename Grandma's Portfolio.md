@@ -4,7 +4,7 @@ library (quantmod)
 library(PerformanceAnalytics)
 
 tickers <- c("GTY", "IIPR", "MO", "DLR", "SJM")
-weights <- c(.20, .20, .15, .20, .25)
+weights <- c(.20, .20, .20, .20, .20)
 
 ## - auto.assign = FALSE - allow you to put downloaded data in Global Environment, pertains to your environment
 
@@ -42,7 +42,7 @@ benchmarkReturn <-Return.portfolio(benchmarkReturns,wealth.index = TRUE )
 
 ## Metrics: BETA, ALPHA, SHARPE Ratio
 
-portfolioReturn <- Return.portfolio(portfolioReturns, wealth.index = TRUE)
+portfolioReturn <- Return.portfolio(portfolioReturns, weights = weights, wealth.index = TRUE)
 
 ## for daily, you divide by 252 (number of trading days in the year)
 
