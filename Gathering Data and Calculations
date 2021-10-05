@@ -1,0 +1,65 @@
+# Grandma-s-Portfolio
+
+library (quantmod) 
+library(PerformanceAnalytics)
+
+## Setting up the Environment
+
+```{r loading packages}
+knitr::opts_chunk$set(echo = TRUE)
+library (quantmod) 
+library(PerformanceAnalytics)
+library(dygraphs)
+library(ggplot2)
+```
+```
+After loading the requisite packages, we create vectors - tickers and weights -
+and assign them to our variable. This will allow us to gather historical data.
+
+```
+```{r setup, echo=TRUE}
+tickers <- c("MO", "HD", "DIS", "SJM", "MSFT")
+weights <- c(.20, .20, .20, .20, .20)
+
+```
+# Gathering Data
+
+
+Data gathering is done using the **getSymbols.yahoo()** function. 
+
+auto.assign = FALSE; allows us to transpose data to Global Environment.
+
+**[,4]** specifies that we only want the 4th column in the dataset
+
+**na.omit()** removes any missing price or NA data
+
+```{r, echo= TRUE}
+Raw_Portfolio_Prices <- NULL
+for (ticker in tickers){
+                Raw_Portfolio_Prices <- 
+                  cbind(Raw_Portfolio_Prices, 
+                        getSymbols.yahoo(ticker, 
+                                         from = "2016-01-01", to = "2021-09-01",
+                                         periodicity = "monthly", 
+                                         auto.assign = FALSE)[,4])
+}
+
+colnames(Raw_Portfolio_Prices) <- c("MO", "HD", "DIS", "SJM", "MSFT")
+
+```
+
+## Rate of Change and Dollar Return 
+
+We are using ROC() function calculate respected stock's price rate of change: **Formula: B minus A divided by A multiplied by 100**
+
+**wealth.index = TRUE** allows us to ascertain a dollar amount of our calculations 
+
+```{r, echo=TRUE}
+
+ROC_Stock_Prices <- na.omit(ROC(Raw_Portfolio_Prices ))
+
+ROC_Portfolio <- Return.portfolio(ROC_Stock_Prices, weights = weights)
+
+Portolio_Return <- Return.portfolio(ROC_Stock_Prices, weights = weights, 
+                                    wealth.index = TRUE)
+```
