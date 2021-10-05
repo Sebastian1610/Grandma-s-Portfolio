@@ -1,0 +1,25 @@
+## Correlation 
+
+Correlation  measures the degree to which two securities move in relation to each other. It's important to note that if two securities are correlated with one another, it does not mean that one causes the other. 
+
+Correlation coefficient's values range between -1.0 and 1.0. The closer the correlation coefficient is to 1, the more positively correlated two securities are. 
+
+After merging the ROC of our individual stocks with the ROC of Benchmark outperformed
+and naming file "allReturns", when then rename the columns of same. 
+
+corrplot() function then can perform properly. Correlation is 
+presented as number by setting: method = 'number'.
+
+
+library(corrplot)
+allReturns <- na.omit(merge.xts(ROC_Stock_Prices, SDY_ROC))
+colnames(allReturns) <- c("MO", "HD", "DIS", "SJM", "MSFT","SDY")
+corrplot(cor(allReturns), method = 'number')
+
+## Amongst securities,  Microsoft (MSFT) and Home Depot (HD) have the highest 
+correlation coefficient of .46. Moreover, Microsoft (MSFT) and 
+Smucker Company (SJM) are the least correlated with a correlation 
+coefficient of .09.
+
+## When compared to SDY, Home Depot (HD) and Disney (DIS) have share the highest 
+coefficient: .65, while Smucker Compnay (SJM) has the lowest: .22
