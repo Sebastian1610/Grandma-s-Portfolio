@@ -1,0 +1,45 @@
+## Gathering Benchmark Data
+
+Given we are creating a portfolio of dividend yielding equities, we will compare same against the 
+SPDR S&P Dividend ETF:**SDY**. 
+
+
+Likewise with out portfolio, we use the **getSymbols.yahoo()** function to gather data about our benchmark. 
+
+
+SDY <- getSymbols.yahoo("SDY", from = "2016-1-1", 
+                        periodicity = "monthly", to = "2021-09-01", 
+                        auto.assign = FALSE)[,4]
+
+SDY_ROC <- na.omit(ROC(SDY))
+
+SDY_Returns <-Return.portfolio(SDY_ROC, wealth.index = TRUE)
+
+
+
+## Visualition of Comparisons
+
+plot(SDY)
+
+
+Merged_Data <- na.omit(merge.xts(Portolio_Return, SDY_Returns))
+colnames(Merged_Data) <- c("Portfolio", "SDY")
+dygraph(Merged_Data, main = "Return of $1 Invested") %>% 
+  dyAxis("y", label = "Amount ($)") %>% 
+  dyAxis("x", label = "5 Year Timeline")
+
+
+
+
+
+Portfolio_and_SDY <- na.omit(merge.xts(ROC_Portfolio, SDY_ROC))
+
+colnames(Portfolio_and_SDY) <- c("Portfolio", "SDY")
+
+
+dygraph(Portfolio_and_SDY, main = "ROC: Portfolio vs. SDY") %>% 
+  dyAxis("y", label = "Rate of Change") %>% 
+  dyAxis("x", label = "5 Year Timeline")
+
+
+
