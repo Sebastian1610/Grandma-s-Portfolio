@@ -1,0 +1,66 @@
+# Data Visualization of Portfolio
+
+
+We use the **dygraph()** function to creat an interactive graph to visualise the past 5 years of the respected stocks' price movement.
+
+**chart.StackedBar()** function is used to better understand how the **Value** and **Weight** of the individual stocks increased or descreased over timeperiod.  
+
+To properly use **chart.StackedBar()** our argument must include **verbose = TRUE**; which we perform below.
+
+```{r, echo=TRUE, warning=FALSE}
+## To Chart Stacked Bars, verbose = TRUE
+
+Verbose_Portolio_Return <- Return.portfolio(ROC_Stock_Prices, 
+                                            weights = weights, 
+                                            wealth.index = TRUE, verbose = TRUE)
+
+dygraph(Raw_Portfolio_Prices, main = "5 Year Historical Prices") %>% 
+  dyAxis("y", label = "Amount ($)") %>% 
+  dyAxis("x", label = "Date")
+
+
+```
+```
+From above graph we see that Microsoft (MSFT) was best performer 
+over the last 5 years, concurrently Altria (MO) the laggard.
+```
+```{r, echo=TRUE}
+plot(Portolio_Return) 
+```
+
+```
+Plot of portfolio return demonstrates $1 invested in our evenly weighted 
+portfolio of securitues would return a $2 or  100% return, 
+not including our extolled dividend income.
+
+```
+
+
+```{r, echo=TRUE}
+
+chart.StackedBar(Verbose_Portolio_Return$BOP.Value) 
+
+```
+
+```
+Given the prolific appreciation of Microsoft, above graph shows the 
+increasing value of same, most notably within the pastyear: start of 2020
+```
+
+
+
+```{r, echo=TRUE}
+chart.StackedBar(Verbose_Portolio_Return$BOP.Weight) 
+
+```
+```
+The leitmotif of Microsoft's appreciation is further visualized, 
+showing the gradual increase of its weight within portfolio; 
+doubling, accounting for > 40%
+```
+
+
+```{r, echo=TRUE}
+chart.StackedBar(Verbose_Portolio_Return$returns)
+```
+
